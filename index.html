@@ -130,7 +130,7 @@
       
       
       <a class="forkMe" style="position:absolute;z-index:999;top:0;right:0.5em;" 
-        href="https://github.com/SkylineVagrancy" target="_blank">
+        href="https://github.com/roc-zjp" target="_blank">
         <img src="/img/forkme.png"
           class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
       
@@ -251,72 +251,9 @@
 <h2 id="Bundle"><a href="#Bundle" class="headerlink" title="Bundle"></a>Bundle</h2><ol>
 <li>Android开发中，Bundle 无处不在，不管是启动Activity、Service或者发送Broadcast,都会用到。Android可以通过设置 android:process 设置Activity 或者Service所在的进程，因此Android在设计Bundle 的时候就支持跨进程<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Uri uri = Uri.parse(&quot;smsto:10086&quot;);</span><br><span class="line">Intent intent = new Intent(Intent.ACTION_SENDTO, uri);</span><br><span class="line">Bundle bundle = new Bundle();</span><br><span class="line">bundle.putString(&quot;sms_body&quot;, &quot;SMS Text&quot;);</span><br><span class="line">intent.putExtras(bundle);</span><br><span class="line">//  intent.putExtra(&quot;sms_body&quot;, &quot;SMS Text&quot;);</span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure></li>
 </ol>
-<h2 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h2><ol>
-<li>通过继承 ContentProvider ,并实现ContentProvider 的增删改查等方法，实现与其他应用共享数据</li>
-</ol>
-<h2 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h2><ol>
-<li>通过共享文件，将共享数据写到文件，然后其他程序通过读取文件，就可以实现数据的共享。</li>
-</ol>
-<h2 id="Messenger"><a href="#Messenger" class="headerlink" title="Messenger"></a>Messenger</h2><ol>
-<li><p>服务端定义 Messenger,在 onBind()方法返回</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MessengerService</span> : <span class="type">Service</span></span>() &#123;</span><br><span class="line">    <span class="keyword">var</span> serviceHandler = <span class="keyword">object</span> : Handler(Looper.getMainLooper()) &#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">            <span class="keyword">when</span> (msg.what) &#123;</span><br><span class="line">                <span class="number">0x110</span> -&gt; &#123;</span><br><span class="line">                    LogUtils.d(<span class="string">&quot;收到了客户端消息&quot;</span>)</span><br><span class="line">                    msg.replyTo.send(Message().apply &#123;</span><br><span class="line">                        what = <span class="number">0x110</span></span><br><span class="line">                    &#125;)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> messenger = Messenger(serviceHandler)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBind</span><span class="params">(intent: <span class="type">Intent</span>?)</span></span>: IBinder? &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> messenger.binder</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>客户端绑定服务,发送消息时Message.replyTo 设置成客户端 Messenger</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> handler = <span class="keyword">object</span> : Handler(Looper.getMainLooper()) &#123;</span><br><span class="line">      <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>)</span></span> &#123;</span><br><span class="line">          <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">          <span class="keyword">when</span> (msg.what) &#123;</span><br><span class="line">              <span class="number">0x110</span> -&gt; &#123;</span><br><span class="line">                  LogUtils.d(<span class="string">&quot;收到了服务端0x110消息的回复&quot;</span>)</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="keyword">var</span> clientMessenger = Messenger(handler)</span><br><span class="line"><span class="keyword">var</span> conn = <span class="keyword">object</span> : ServiceConnection &#123;</span><br><span class="line">          <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onServiceConnected</span><span class="params">(name: <span class="type">ComponentName</span>?, service: <span class="type">IBinder</span>?)</span></span> &#123;</span><br><span class="line">              <span class="keyword">var</span> messenger = Messenger(service)</span><br><span class="line">              messenger.send(Message().apply &#123;</span><br><span class="line">                  what = <span class="number">0x110</span></span><br><span class="line">                  replyTo = clientMessenger</span><br><span class="line">              &#125;)</span><br><span class="line">   </span><br><span class="line">          &#125;</span><br><span class="line">   </span><br><span class="line">          <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onServiceDisconnected</span><span class="params">(name: <span class="type">ComponentName</span>?)</span></span> &#123;</span><br><span class="line">   </span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">var</span> intent = Intent().apply &#123;</span><br><span class="line">          action = <span class="string">&quot;com.zjp.messengerservice&quot;</span></span><br><span class="line">          setPackage(<span class="string">&quot;com.zjp.androidacrossprocessesservice&quot;</span>)</span><br><span class="line">      &#125;</span><br><span class="line"> <span class="keyword">var</span> result = bindService(intent, conn, Context.BIND_AUTO_CREATE)</span><br></pre></td></tr></table></figure></li>
-<li><p>服务端收到消息,通过Message.replyTo 给客户端发送消息</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> serviceHandler = <span class="keyword">object</span> : Handler(Looper.getMainLooper()) &#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">            <span class="keyword">when</span> (msg.what) &#123;</span><br><span class="line">                <span class="number">0x110</span> -&gt; &#123;</span><br><span class="line">                    LogUtils.d(<span class="string">&quot;收到了客户端消息&quot;</span>)</span><br><span class="line">                    msg.replyTo.send(Message().apply &#123;</span><br><span class="line">                        what = <span class="number">0x110</span></span><br><span class="line">                    &#125;)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">var</span> messenger = Messenger(serviceHandler)</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="AIDL"><a href="#AIDL" class="headerlink" title="AIDL"></a>AIDL</h2><ol>
-<li><p>创建AIDL文件：</p>
-<blockquote>
-<p>通过Android Studio File -&gt; New -&gt;AIDL -&gt;AIDL File ,就可以创建一个AIDL文件。然后Rebuild Project ,Android Studio 就会自动在 build -&gt; generated -&gt; buildType -&gt; out 目录下生成对应的 .java文件，里面就包含了后期我们用到的Stub类。</p>
-</blockquote>
-</li>
-<li><p>实现Stub 接口：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> stub = object : Stub() &#123;</span><br><span class="line">        <span class="function">override fun <span class="title">basicType</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">            anInt: Int,</span></span></span><br><span class="line"><span class="params"><span class="function">            aLong: Long,</span></span></span><br><span class="line"><span class="params"><span class="function">            aBoolean: Boolean,</span></span></span><br><span class="line"><span class="params"><span class="function">            aFloat: Float,</span></span></span><br><span class="line"><span class="params"><span class="function">            aDouble: Double,</span></span></span><br><span class="line"><span class="params"><span class="function">            aString: String?</span></span></span><br><span class="line"><span class="params"><span class="function">        )</span>: String </span>&#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;this data is from service&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>onBind 方法返回 stub，向客户端公开接口：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">override fun <span class="title">onBind</span><span class="params">(intent: Intent?)</span>: IBinder? </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> stub.asBinder()</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>现在，<code>binder</code> 是 <code>Stub</code> 类的一个实例（一个 Binder），其定义了服务的远程过程调用 (RPC) 接口。在下一步中，我们会向客户端公开此实例，以便客户端能与服务进行交互。</p>
-<blockquote>
-<ul>
-<li><p>默认情况下，RPC 调用是同步调用。如果您知道服务完成请求的时间不止几毫秒，则不应从 Activity 的<strong>主线程</strong>调用该服务，因为这可能会使应用挂起（Android 可能会显示“Application is Not Responding”对话框）— 通常，您应从客户端内的单独线程调用服务</p>
-</li>
-<li><p>您引发的任何异常都不会回传给调用方。</p>
-</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>AIDL 支持一下数据类型</p>
-<ul>
-<li><p>Java基本数据类型 byte char short int long float double boolean</p>
-</li>
-<li><p>String</p>
-</li>
-<li><p>CharSequence</p>
-</li>
-<li><p>List List里面所有数据必须实现 Parcelable</p>
-</li>
-<li><p>Map Map里面所有数据必须实现 Parcelable</p>
-</li>
-</ul>
-</blockquote>
-</li>
-<li><p>Copy 服务端 aidl 文件夹到 客服端对应位置,客户端在 onServiceConnected() 回调中YourServiceInterface*.Stub.asInterface(service),以将返回的参数转换成 <em>YourServiceInterface</em> 类型。<img src="https://raw.githubusercontent.com/SkylineVagrancy/cloudimg/master/2022/02/15-11-16-01-screenshot-20220215-111420.png"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> conn = object : ServiceConnection &#123;</span><br><span class="line">           <span class="function">override fun <span class="title">onServiceConnected</span><span class="params">(name: ComponentName?, service: IBinder?)</span> </span>&#123;</span><br><span class="line">               <span class="keyword">var</span> stub = IMyAidlInterface.Stub.asInterface(service)</span><br><span class="line">               <span class="keyword">var</span> result = stub.basicTypes(<span class="number">1</span>, <span class="number">1</span>, <span class="keyword">false</span>, <span class="number">1.0f</span>, <span class="number">1.0</span>, <span class="string">&quot;测试&quot;</span>)</span><br><span class="line">   </span><br><span class="line">           &#125;</span><br><span class="line">   </span><br><span class="line">           <span class="function">override fun <span class="title">onServiceDisconnected</span><span class="params">(name: ComponentName?)</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line">           &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><ul>
-<li><p><strong>文件共享</strong>：适用于 实时性要求不高，并发场景不多的情况，用法简单通用</p>
-</li>
-<li><p><strong>Bundle：</strong> 适用于Android四大组件之间</p>
-</li>
-<li><p><strong>ContentProvider：</strong> 适用于为其他客户端提供数据，不涉及双向通信</p>
-</li>
-<li><p><strong>AIDL：</strong> 适用于大量复杂数据，有实时双向数据通讯</p>
-</li>
-<li><p><strong>Messenger：</strong> AIDL的简化版本，适用于数据简单，数据交换不是那么频繁</p>
-</li>
-</ul>
-
+    
+    <a class="article-more-a" href="/2022/02/14/%E8%B7%A8%E8%BF%9B%E7%A8%8B/#more">more >></a>
+    
     
 
     
@@ -498,23 +435,9 @@ Connection: Upgrade
 Sec-WebSocket-Version: 13
 </code></pre>
 <p>Sec-WebSocket-Key 是由浏览器随机生成的，提供基本的防护，防止恶意或者无意的连接。</p>
-<h2 id="服务端响应报文-Header"><a href="#服务端响应报文-Header" class="headerlink" title="服务端响应报文 Header"></a>服务端响应报文 Header</h2><p>首先我们来看看服务端的响应报文：</p>
-<pre><code>HTTP/1.1 101 Switching Protocols
-Upgrade: websocket
-Connection: Upgrade
-Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk=
-Sec-WebSocket-Protocol: chat 
-</code></pre>
-<ol>
-<li>首先，101 状态码表示服务器已经理解了客户端的请求，并将通过 Upgrade 消息头通知客户端采用不同的协议来完成这个请求；</li>
-<li>然后， Sec-WebSocket-Accept 这个则是经过服务器确认，并且加密过后的 Sec-WebSocket-Key；</li>
-<li>最后， Sec-WebSocket-Protocol 则是表示最终使用的协议。</li>
-</ol>
-<h3 id="Sec-WebSocket-Accept-的计算方法："><a href="#Sec-WebSocket-Accept-的计算方法：" class="headerlink" title="Sec-WebSocket-Accept 的计算方法："></a>Sec-WebSocket-Accept 的计算方法：</h3><ol>
-<li>将 <strong>Sec-WebSocket-Key</strong> 跟 <strong>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</strong> 拼接</li>
-<li>通过 SHA1 计算出摘要，并转成 base64 字符串。</li>
-</ol>
-
+    
+    <a class="article-more-a" href="/2021/12/15/Websocket%20%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E6%8A%A5%E6%96%87/#more">more >></a>
+    
     
 
     
@@ -600,25 +523,9 @@ Sec-WebSocket-Protocol: chat
 <h2 id="下载repo工具"><a href="#下载repo工具" class="headerlink" title="下载repo工具"></a>下载repo工具</h2><h3 id="安装Git并设置邮箱和用户名"><a href="#安装Git并设置邮箱和用户名" class="headerlink" title="安装Git并设置邮箱和用户名"></a>安装Git并设置邮箱和用户名</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git</span><br><span class="line">git config --global user.email “usergmail@gmail.com”</span><br><span class="line">git config --global user.name “username”</span><br></pre></td></tr></table></figure>
 
 <h3 id="安装Python"><a href="#安装Python" class="headerlink" title="安装Python"></a>安装Python</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install python</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装curl库"><a href="#安装curl库" class="headerlink" title="安装curl库"></a>安装curl库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install curl</span><br></pre></td></tr></table></figure>
-
-<h3 id="下载repo并设置权限"><a href="#下载repo并设置权限" class="headerlink" title="下载repo并设置权限"></a>下载repo并设置权限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/bin</span><br><span class="line">PATH=~/bin:<span class="variable">$PATH</span></span><br><span class="line">curl https://storage.googleapis.com/git-repo-downloads/repo &gt; ~/bin/repo</span><br><span class="line"><span class="comment">#curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo &gt; ~/bin/repo  #国内源，无需翻墙</span></span><br><span class="line">chmod a+x ~/bin/repo  <span class="comment">#设置权限</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="下载源码"><a href="#下载源码" class="headerlink" title="下载源码"></a>下载源码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir aosp</span><br><span class="line"><span class="built_in">cd</span> aosp</span><br></pre></td></tr></table></figure>
-
-<h3 id="初始化指定版本"><a href="#初始化指定版本" class="headerlink" title="初始化指定版本"></a>初始化指定版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo init -u https://android.googlesource.com/platform/manifest -b android-9.0.0_r1</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>Android版本号查询：<a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/manifest/+refs">Android 所有版本号</a></p>
-</blockquote>
-<p>如果网络不能翻墙，建议使用清华镜像源<a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/help/AOSP/">清华源镜像</a> 。如果知识阅读，建议使用清华源，如果想编译并在虚拟机上运行，建议翻墙下载谷歌AOSP。</p>
-<h3 id="下载源码-1"><a href="#下载源码-1" class="headerlink" title="下载源码"></a>下载源码</h3><p>在初始好了指定版本之后，执行下面的命令就会自动下载源码，我们就只需要静静的等待下载完成。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo sync</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/SkylineVagrancy/cloudimg/master/2022/01/14-16-34-35-screenshot-20220114-163417.png" alt="screenshot-20220114-163417.png"></p>
-<p><strong>下载完成后大概100G左右，但是实际下载过程中会产生很多零时文件，最好预留200G的硬盘空间</strong></p>
-
+    
+    <a class="article-more-a" href="/2021/10/20/AOSP%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD/#more">more >></a>
+    
     
 
     
@@ -704,152 +611,10 @@ Sec-WebSocket-Protocol: chat
 <h1 id="设置头部"><a href="#设置头部" class="headerlink" title="设置头部"></a>设置头部</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Header 1</span></span><br><span class="line"><span class="comment">## Header 2</span></span><br><span class="line"><span class="comment">### Header 3</span></span><br><span class="line"><span class="comment">#### Header 4</span></span><br><span class="line"><span class="comment">##### Header 5</span></span><br><span class="line"><span class="comment">###### Header 6</span></span><br></pre></td></tr></table></figure>
 
 <p><font color=#ff0000 size=3>效果</font></p>
-<h2 id="Header-2"><a href="#Header-2" class="headerlink" title="Header 2"></a>Header 2</h2><h3 id="Header-3"><a href="#Header-3" class="headerlink" title="Header 3"></a>Header 3</h3><h4 id="Header-4"><a href="#Header-4" class="headerlink" title="Header 4"></a>Header 4</h4><h5 id="Header-5"><a href="#Header-5" class="headerlink" title="Header 5"></a>Header 5</h5><h6 id="Header-6"><a href="#Header-6" class="headerlink" title="Header 6"></a>Header 6</h6><h1 id="无序列表（注意缩进）"><a href="#无序列表（注意缩进）" class="headerlink" title="无序列表（注意缩进）"></a>无序列表（<font color=#ff0000 size=3>注意缩进</font>）</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">*  第一列</span><br><span class="line"> * 第二列</span><br><span class="line"> * 第三列</span><br><span class="line">  * 第四列</span><br></pre></td></tr></table></figure>
-
-<p><font color=#ff0000 size=3>效果</font></p>
-<ul>
-<li>第一列</li>
-<li>第二列</li>
-<li>第三列<ul>
-<li>第四列</li>
-</ul>
-</li>
-</ul>
-<h1 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 第一列</span><br><span class="line">2. 第二列</span><br><span class="line">3. 第三列</span><br></pre></td></tr></table></figure>
-
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a><font color=#ff0000 size=3>效果</font></h3><ol>
-<li>第一列</li>
-<li>第二列</li>
-<li>第三列</li>
-<li>第四列</li>
-</ol>
-<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; 第一列</span><br><span class="line">&gt; 第二列</span><br><span class="line">&gt; 第三列</span><br></pre></td></tr></table></figure>
-
-<h3 id="引用效果"><a href="#引用效果" class="headerlink" title="引用效果"></a><font color=#ff0000 size=3>引用效果</font></h3><blockquote>
-<p>第一列<br>第二列<br>第三列    </p>
-</blockquote>
-<h1 id="嵌套列表"><a href="#嵌套列表" class="headerlink" title="嵌套列表"></a>嵌套列表</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- 列表1</span><br><span class="line">    + 列表2</span><br><span class="line">    + 列表3</span><br><span class="line">        + 列表8</span><br><span class="line">- 列表4</span><br><span class="line">    +  列表5</span><br><span class="line">    +  列表6</span><br></pre></td></tr></table></figure>
-
-<h3 id="嵌套列表效果"><a href="#嵌套列表效果" class="headerlink" title="嵌套列表效果"></a><font color=#ff0000 size=3>嵌套列表效果</font></h3><ul>
-<li>列表1<ul>
-<li>列表2</li>
-<li>列表3<ul>
-<li>列表8</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>列表4<ul>
-<li>列表5</li>
-<li>列表6</li>
-</ul>
-</li>
-</ul>
-<h1 id="文字链接"><a href="#文字链接" class="headerlink" title="文字链接"></a>文字链接</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[百度一下](https://www.baidu.com &quot;百度一下&quot;)</span><br></pre></td></tr></table></figure>
-
-<h3 id="文字链接效果"><a href="#文字链接效果" class="headerlink" title="文字链接效果"></a><font color=#ff0000 size=3>文字链接效果</font></h3><p><a target="_blank" rel="noopener" href="https://www.baidu.com/" title="百度一下">百度一下</a></p>
-<blockquote>
-<p>前面的百度一下表示展示文字<br>后面的百度一下指当鼠标在文字上面的时候显示的内容 </p>
-</blockquote>
-<h1 id="图片链接"><a href="#图片链接" class="headerlink" title="图片链接"></a>图片链接</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![测试](http://github.global.ssl.fastly.net/images/modules/logos_page/GitHub-Mark.png &quot;GitHub Mark&quot;)</span><br></pre></td></tr></table></figure>
-
-<h3 id="图片链接效果"><a href="#图片链接效果" class="headerlink" title="图片链接效果"></a><font color=#ff0000 size=3>图片链接效果</font></h3><p><img src="http://github.global.ssl.fastly.net/images/modules/logos_page/GitHub-Mark.png" alt="测试" title="GitHub Mark"></p>
-<blockquote>
-<p>前面的测试指图片的名称<br>后面的github mark指鼠标放在图片上展示的内容</p>
-</blockquote>
-<h1 id="自动链接"><a href="#自动链接" class="headerlink" title="自动链接"></a>自动链接</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;854350705@qq.com&gt;</span><br><span class="line">&lt;https:www.baidu.com&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="自动链接效果"><a href="#自动链接效果" class="headerlink" title="自动链接效果"></a><font color=#ff0000 size=3>自动链接效果</font></h3><p><a href="mailto:&#56;&#x35;&#x34;&#x33;&#53;&#x30;&#x37;&#48;&#x35;&#x40;&#113;&#x71;&#x2e;&#99;&#x6f;&#109;">&#56;&#x35;&#x34;&#x33;&#53;&#x30;&#x37;&#48;&#x35;&#x40;&#113;&#x71;&#x2e;&#99;&#x6f;&#109;</a><br><a target="_blank" rel="noopener" href="https://www.baidu.com/">https:www.baidu.com</a></p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">用``` ```包裹</span><br><span class="line">或者每行文字4个空格或者1个TAB</span><br></pre></td></tr></table></figure>
-
-<h3 id="代码效果"><a href="#代码效果" class="headerlink" title="代码效果"></a><font color=#ff0000 size=3>代码效果</font></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String a=<span class="string">&quot;a&quot;</span>;</span><br><span class="line">String b = <span class="string">&quot;b&quot;</span>;</span><br><span class="line">priintln(a+b);</span><br></pre></td></tr></table></figure>
-
-<pre><code>String a=&quot;a&quot;;
-String a=&quot;a&quot;;
-String a=&quot;a&quot;;
-</code></pre>
-<p>#注释</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 注释 --&gt;</span><br></pre></td></tr></table></figure>
-
-<!-- 注释 -->
-
-<h1 id="转义字符"><a href="#转义字符" class="headerlink" title="转义字符"></a>转义字符</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">\\ 反斜杠</span><br><span class="line">\` 反引号</span><br><span class="line">\* 星号</span><br><span class="line">\_ 下划线</span><br><span class="line">\&#123;\&#125; 大括号</span><br><span class="line">\[\] 中括号</span><br><span class="line">\(\) 小括号</span><br><span class="line">\# 井号</span><br><span class="line">\+ 加号</span><br><span class="line">\- 减号</span><br><span class="line">\. 英文句号</span><br><span class="line">\! 感叹号</span><br></pre></td></tr></table></figure>
-
-<h3 id="转义效果（每个字符前添加-）"><a href="#转义效果（每个字符前添加-）" class="headerlink" title="转义效果（每个字符前添加\）"></a><font color=#ff0000 size=3>转义效果（每个字符前添加\）</font></h3><p>\ 反斜杠</p>
-<p>` 反引号</p>
-<p>* 星号</p>
-<p>_ 下划线</p>
-<p>{} 大括号</p>
-<p>[] 中括号</p>
-<p>() 小括号</p>
-<p># 井号</p>
-<p>+ 加号</p>
-<p>- 减号</p>
-<p>. 英文句号</p>
-<p>! 感叹号</p>
-<h1 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">| 列1        | 列2           |列3 |</span><br><span class="line">| ------------- |:-------------:| -----:|</span><br><span class="line">| col 3 is      | right-aligned | $1600 |</span><br><span class="line">| col 2 is      | centered      |   $12 |</span><br><span class="line">| zebra stripes | are neat      |    $1 |</span><br></pre></td></tr></table></figure>
-
-<h3 id="表格效果"><a href="#表格效果" class="headerlink" title="表格效果"></a><font color=#ff0000 size=3>表格效果</font></h3><table>
-<thead>
-<tr>
-<th>列1</th>
-<th align="center">列2</th>
-<th align="right">列3</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>col 3 is</td>
-<td align="center">right-aligned</td>
-<td align="right">$1600</td>
-</tr>
-<tr>
-<td>col 2 is</td>
-<td align="center">centered</td>
-<td align="right">$12</td>
-</tr>
-<tr>
-<td>zebra stripes</td>
-<td align="center">are neat</td>
-<td align="right">$1</td>
-</tr>
-</tbody></table>
-<h1 id="设置字体大小颜色"><a href="#设置字体大小颜色" class="headerlink" title="设置字体大小颜色"></a>设置字体大小颜色</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">### &lt;font color=#ff0000 face=&quot;微软雅黑&quot; size=12&gt; 表格效果&lt;/font&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="设置字体大小颜色效果"><a href="#设置字体大小颜色效果" class="headerlink" title=" 设置字体大小颜色效果"></a><font color=#ff0000 face="微软雅黑" size=3> 设置字体大小颜色效果</font></h3><h1 id="行内标签"><a href="#行内标签" class="headerlink" title="行内标签"></a>行内标签</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">快捷键 `Ctrl + D` 来收藏本页</span><br></pre></td></tr></table></figure>
-
-<h3 id="行内标签效果"><a href="#行内标签效果" class="headerlink" title=" 行内标签效果"></a><font color=#ff0000 size=3> 行内标签效果</font></h3><p>快捷键 <code>Ctrl + D</code> 来收藏本页</p>
-<p>#html标签</p>
-<table>
-    <tr>
-        <th rowspan="2">值班人员</th>
-        <th>星期一</th>
-        <th>星期二</th>
-        <th>星期三</th>
-    </tr>
-    <tr>
-        <td>李强</td>
-        <td>张明</td>
-        <td>王平</td>
-    </tr>
-</table>
-
-<p>#参考式链接</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">我经常去的几个网站[Google][1]、[Leanote][2]以及[自己的博客][3]</span><br><span class="line">[Leanote 笔记][2]是一个不错的[网站][]。</span><br><span class="line">[1]:http://www.google.com &quot;Google&quot;</span><br><span class="line">[2]:http://www.leanote.com &quot;Leanote&quot;</span><br><span class="line">[3]:http://http://blog.leanote.com/freewalk &quot;梵居闹市&quot;</span><br><span class="line">[网站]:http://http://blog.leanote.com/freewalk</span><br></pre></td></tr></table></figure>
-
-<p>我经常去的几个网站[Google][1]、[Leanote][2]以及[自己的博客][3]<br>[Leanote 笔记][2]是一个不错的[网站][]。<br>[1]:<a target="_blank" rel="noopener" href="http://www.google.com/">http://www.google.com</a> “Google”<br>[2]:<a target="_blank" rel="noopener" href="http://www.leanote.com/">http://www.leanote.com</a> “Leanote”<br>[3]:<a target="_blank" rel="noopener" href="http://http//blog.leanote.com/freewalk">http://http://blog.leanote.com/freewalk</a> “梵居闹市”<br>[网站]:<a target="_blank" rel="noopener" href="http://http//blog.leanote.com/freewalk">http://http://blog.leanote.com/freewalk</a></p>
-<p>#包含段落的列表</p>
-<blockquote>
-<p>必须缩进4个空格或者1个TAB</p>
-</blockquote>
-<p><span id = "jump">跳转到这里：</span></p>
-<p><a href="#jump">说明文字</a></p>
-<h1 id="文字加粗"><a href="#文字加粗" class="headerlink" title="文字加粗"></a>文字加粗</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">**加粗内容**</span><br></pre></td></tr></table></figure>
-
-<p> <strong>加粗内容</strong></p>
-<h1 id="文字斜体"><a href="#文字斜体" class="headerlink" title="文字斜体"></a>文字斜体</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_斜体_</span><br></pre></td></tr></table></figure>
-
-<p> <em>斜体</em></p>
-
+<h2 id="Header-2"><a href="#Header-2" class="headerlink" title="Header 2"></a>Header 2</h2><h3 id="Header-3"><a href="#Header-3" class="headerlink" title="Header 3"></a>Header 3</h3><h4 id="Header-4"><a href="#Header-4" class="headerlink" title="Header 4"></a>Header 4</h4><h5 id="Header-5"><a href="#Header-5" class="headerlink" title="Header 5"></a>Header 5</h5><h6 id="Header-6"><a href="#Header-6" class="headerlink" title="Header 6"></a>Header 6</h6>
+    
+    <a class="article-more-a" href="/2021/10/10/markdown/#more">more >></a>
+    
     
 
     
@@ -1119,11 +884,11 @@ String a=&quot;a&quot;;
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color5">WebSocket</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">WebSocket</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1187,7 +952,7 @@ String a=&quot;a&quot;;
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="https://toskyline.github.io/" target="_blank" 
+              <a href="https://roc-zjp.github.io/" target="_blank" 
                 class="search-title" title="记录工作和学习过程中的笔记：Android、Flutter、IOS、WEB">
                 
                   <img src="/img/avatar.jpg">
@@ -1197,7 +962,7 @@ String a=&quot;a&quot;;
             </li>
           
             <li class="search-li">
-              <a href="https://github.com/SkylineVagrancy" target="_blank" 
+              <a href="https://github.com/roc-zjp" target="_blank" 
                 class="search-title" >
                 
                   <i class="icon-link icon"></i>

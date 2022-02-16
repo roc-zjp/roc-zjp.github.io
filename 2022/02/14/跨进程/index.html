@@ -19,7 +19,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://raw.githubusercontent.com/SkylineVagrancy/cloudimg/master/2022/02/15-11-16-01-screenshot-20220215-111420.png">
 <meta property="article:published_time" content="2022-02-14T07:20:34.000Z">
-<meta property="article:modified_time" content="2022-02-16T09:26:08.206Z">
+<meta property="article:modified_time" content="2022-02-16T09:48:47.059Z">
 <meta property="article:author" content="周俊鹏">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -131,7 +131,7 @@
       
       
       <a class="forkMe" style="position:absolute;z-index:999;top:0;right:0.5em;" 
-        href="https://github.com/SkylineVagrancy" target="_blank">
+        href="https://github.com/roc-zjp" target="_blank">
         <img src="/img/forkme.png"
           class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
       
@@ -247,6 +247,8 @@
 <h2 id="Bundle"><a href="#Bundle" class="headerlink" title="Bundle"></a>Bundle</h2><ol>
 <li>Android开发中，Bundle 无处不在，不管是启动Activity、Service或者发送Broadcast,都会用到。Android可以通过设置 android:process 设置Activity 或者Service所在的进程，因此Android在设计Bundle 的时候就支持跨进程<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Uri uri = Uri.parse(&quot;smsto:10086&quot;);</span><br><span class="line">Intent intent = new Intent(Intent.ACTION_SENDTO, uri);</span><br><span class="line">Bundle bundle = new Bundle();</span><br><span class="line">bundle.putString(&quot;sms_body&quot;, &quot;SMS Text&quot;);</span><br><span class="line">intent.putExtras(bundle);</span><br><span class="line">//  intent.putExtra(&quot;sms_body&quot;, &quot;SMS Text&quot;);</span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure></li>
 </ol>
+<span id="more"></span>
+
 <h2 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h2><ol>
 <li>通过继承 ContentProvider ,并实现ContentProvider 的增删改查等方法，实现与其他应用共享数据</li>
 </ol>
@@ -551,11 +553,11 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color5">WebSocket</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">WebSocket</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -619,7 +621,7 @@
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="https://toskyline.github.io/" target="_blank" 
+              <a href="https://roc-zjp.github.io/" target="_blank" 
                 class="search-title" title="记录工作和学习过程中的笔记：Android、Flutter、IOS、WEB">
                 
                   <img src="/img/avatar.jpg">
@@ -629,7 +631,7 @@
             </li>
           
             <li class="search-li">
-              <a href="https://github.com/SkylineVagrancy" target="_blank" 
+              <a href="https://github.com/roc-zjp" target="_blank" 
                 class="search-title" >
                 
                   <i class="icon-link icon"></i>
