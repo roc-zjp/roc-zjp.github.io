@@ -737,6 +737,71 @@ Sec-WebSocket-Version: 13
 
 
   
+    <article id="post-Android常用ADB命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="获取程序包名"><a href="#获取程序包名" class="headerlink" title="获取程序包名"></a>获取程序包名</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell pm list packages</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ adb shell pm list packages</span><br><span class="line">package:android</span><br><span class="line">package:cn.wps.moffice</span><br><span class="line">package:com.android.backupconfirm</span><br><span class="line">package:com.android.bluetooth</span><br><span class="line">package:com.android.browser</span><br><span class="line">package:com.android.calculator2</span><br><span class="line">package:com.android.camera</span><br><span class="line">package:com.android.certinstaller</span><br><span class="line">package:com.android.contacts</span><br></pre></td></tr></table></figure>
+
+<h2 id="找到apk的位置"><a href="#找到apk的位置" class="headerlink" title="找到apk的位置"></a>找到apk的位置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell pm path com.tence01.mm</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ adb shell pm path com.tence01.mm</span><br><span class="line">package:/data/app/com.tence01.mm-1.apk</span><br></pre></td></tr></table></figure>
+
+<h2 id="取出apk"><a href="#取出apk" class="headerlink" title="取出apk"></a>取出apk</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb pull /data/app/com.tence01.mm-1.apk ~/apks</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ adb pull /data/app/com.tence01.mm-1.apk ~/apks</span><br><span class="line">2407 KB/s (25567735 bytes in 10.370s)</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动Activity"><a href="#启动Activity" class="headerlink" title="启动Activity"></a>启动Activity</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am start -n 包名/包名.ActivityName</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2019/10/28/Android%E5%B8%B8%E7%94%A8ADB%E5%91%BD%E4%BB%A4/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2019/10/28/Android%E5%B8%B8%E7%94%A8ADB%E5%91%BD%E4%BB%A4/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
 
 
