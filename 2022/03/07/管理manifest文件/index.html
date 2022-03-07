@@ -6,19 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://roc-zjp.github.io">
-  <title>Archives: 2022/3 | 周俊鹏的博客</title>
+  <title>管理Manifest文件 | 周俊鹏的博客</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="周俊鹏的博客">
-<meta property="og:type" content="website">
-<meta property="og:title" content="周俊鹏的博客">
-<meta property="og:url" content="https://roc-zjp.github.io/archives/2022/03/index.html">
+  <meta name="description" content="合并多个Manifest文件您的Android 项目里面，可以包含多个moudle，每个moudle都存在一个AndroidManifest文件，但是你最终打包的APK里面，只存在一个AndroidManifest，gradle在打包的时候，会很多多个Manifest 文件到一个文件里面。 清单合并工具通过遵循一些合并启发式方法并遵守您使用特殊 XML 属性定义的合并首选项来合并每个文件中的所有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="管理Manifest文件">
+<meta property="og:url" content="https://roc-zjp.github.io/2022/03/07/%E7%AE%A1%E7%90%86manifest%E6%96%87%E4%BB%B6/index.html">
 <meta property="og:site_name" content="周俊鹏的博客">
-<meta property="og:description" content="周俊鹏的博客">
+<meta property="og:description" content="合并多个Manifest文件您的Android 项目里面，可以包含多个moudle，每个moudle都存在一个AndroidManifest文件，但是你最终打包的APK里面，只存在一个AndroidManifest，gradle在打包的时候，会很多多个Manifest 文件到一个文件里面。 清单合并工具通过遵循一些合并启发式方法并遵守您使用特殊 XML 属性定义的合并首选项来合并每个文件中的所有">
 <meta property="og:locale">
+<meta property="og:image" content="https://developer.android.com/studio/images/build/manifest-merger_2x.png">
+<meta property="og:image" content="https://developer.android.com/studio/images/build/manifest-merged-view_2x.png">
+<meta property="article:published_time" content="2022-03-07T06:11:49.000Z">
+<meta property="article:modified_time" content="2022-03-07T07:08:11.098Z">
 <meta property="article:author" content="周俊鹏">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://developer.android.com/studio/images/build/manifest-merger_2x.png">
   
     <link rel="alternative" href="/atom.xml" title="周俊鹏的博客" type="application/atom+xml">
   
@@ -173,41 +179,428 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-管理manifest文件" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
   
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
+    <h1 class="article-title" itemprop="name">
+      管理Manifest文件
+    </h1>
+  
+
+
+  
+  
 <a href="/2022/03/07/%E7%AE%A1%E7%90%86manifest%E6%96%87%E4%BB%B6/" class="archive-article-date">
         <time datetime="2022-03-07T06:11:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-03-07</time>
 </a>
 
+  
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="合并多个Manifest文件"><a href="#合并多个Manifest文件" class="headerlink" title="合并多个Manifest文件"></a>合并多个Manifest文件</h2><p>您的Android 项目里面，可以包含多个moudle，每个moudle都存在一个AndroidManifest文件，但是你最终打包的APK里面，只存在一个AndroidManifest，gradle在打包的时候，会很多多个Manifest 文件到一个文件里面。</p>
+<p>清单合并工具通过遵循一些合并启发式方法并遵守您使用特殊 XML 属性定义的合并首选项来合并每个文件中的所有 XML 元素。本页介绍清单合并的工作原理以及如何应用合并首选项来解决合并冲突。</p>
+<span id="more"></span>
+
+<h3 id="合并优先级"><a href="#合并优先级" class="headerlink" title="合并优先级"></a>合并优先级</h3><p>合并工具通过根据每个清单文件的优先级顺序合并所有清单文件，将它们合并到一个文件中。例如，如果您有三个清单文件，则最低优先级的清单会合并到下一个最高优先级的清单中，然后再合并到最高优先级的清单中，如图 1 所示。</p>
+<img title="" src="https://developer.android.com/studio/images/build/manifest-merger_2x.png" alt="" data-align="inline">
+
+
+
+
+
+<p>Android常见的需要合并的清单文件包括三种类型（优先级由低到高）：</p>
+<ol>
+<li><p><strong>库项目中的清单文件</strong></p>
+</li>
+<li><p><strong>应用模块的主清单文件</strong></p>
+</li>
+<li><p><strong>构建变体的清单文件</strong></p>
+</li>
+</ol>
+<h3 id="冲突合并原则"><a href="#冲突合并原则" class="headerlink" title="冲突合并原则"></a>冲突合并原则</h3><table>
+<thead>
+<tr>
+<th>高优先级属性</th>
+<th>低优先级属性</th>
+<th>合并后属性</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>没有值</td>
+<td>没有值</td>
+<td>没有值</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>B</td>
+<td>B</td>
+<td></td>
+</tr>
+<tr>
+<td>A</td>
+<td>没有值</td>
+<td>A</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>A</td>
+<td>A</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>B</td>
+<td>冲突，必须添加<mark>冲突合并标记</mark></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>某些情况下，合并工具会根据一些规则，避免冲突：</p>
+<ol>
+<li><p><code>&lt;manifest&gt;</code> 元素中的属性绝不会合并在一起，只会使用优先级最高的清单中的属性</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/manifest/uses-feature-element"><code>&lt;uses-feature&gt;</code></a> 和 <a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/manifest/uses-library-element"><code>&lt;uses-library&gt;</code></a> 元素中的 <code>android:required</code> 属性使用 OR 合并，这样一来，如果发生冲突，系统将应用 <code>&quot;true&quot;</code> 并始终包含一个清单所需的功能或库</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/manifest/uses-sdk-element"><code>&lt;uses-sdk&gt;</code></a> 元素中的属性始终使用优先级较高的清单中的值，但以下情况除外：</p>
+<ol>
+<li><ul>
+<li>如果优先级较低的清单中的 <code>minSdkVersion</code> 值较高，那么除非您应用 <a target="_blank" rel="noopener" href="https://developer.android.com/studio/build/manage-manifests#override_wzxhzdk35uses-sdk_for_imported_libraries"><code>overrideLibrary</code></a> 合并规则，否则将会发生错误。</li>
+<li>如果优先级较低的清单中的 <code>targetSdkVersion</code> 值较低，合并工具将使用优先级较高的清单中的值，但也会添加所有必要的系统权限，以确保所导入的库继续正常运作（以防遇到较高的 Android 版本具有更多权限限制的情况）。如需详细了解此行为，请参阅有关<a target="_blank" rel="noopener" href="https://developer.android.com/studio/build/manage-manifests#implicit_system_permissions">隐式系统权限</a>的部分。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>绝不会在清单之间匹配 <code>&lt;intent-filter&gt;</code> 元素。每个该元素都被视为唯一的元素，并添加到合并后的清单中的共同父元素中</p>
+</li>
+</ol>
+<h3 id="合并标记"><a href="#合并标记" class="headerlink" title="合并标记"></a>合并标记</h3><p>合并标记又分为两类：<strong>节点标记</strong> 和 <strong>属性标记</strong></p>
+<h4 id="节点标记有："><a href="#节点标记有：" class="headerlink" title="节点标记有："></a><strong>节点标记有：</strong></h4><ul>
+<li><p>**tools:node=”merge”**：没有冲突情况下，默认的冲突解决标记</p>
+<p><strong>低优先级清单</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag"> <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span> <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.SEND&quot;</span> /&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.DEFAULT&quot;</span> /&gt;</span> <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:node</span>=<span class="string">&quot;merge&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>合并后清单</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.SEND&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.DEFAULT&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>**tools:node=”merge-only-attributes”**：仅合并此标记中的属性，不合并嵌套元素。</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.SEND&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">data</span> <span class="attr">android:type</span>=<span class="string">&quot;image/*&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.DEFAULT&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:node</span>=<span class="string">&quot;merge-only-attributes&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>合并后的清单结果：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>tools:node=”remove”</strong></p>
+<p>从合并后的清单中移除此元素。虽然您似乎只需要删除此元素即可，但如果您发现合并后的清单中有不需要的元素，而且该元素是由不受您控制的优先级较低的清单文件（如导入的库）提供的，则必须使用此属性。</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;cow&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/moo&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;duck&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/quack&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;cow&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">tools:node</span>=<span class="string">&quot;remove&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>合并后的清单结果：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;duck&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/quack&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>tools:node=”removeAll”</strong></p>
+<p>与 <code>tools:node=&quot;remove&quot;</code> 类似，但它会移除与此元素类型匹配的所有元素（同一父元素内）</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;cow&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/moo&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;duck&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/quack&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">tools:node</span>=<span class="string">&quot;removeAll&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>合并后的清单结果：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>tools:node=”replace”</strong></p>
+<p>完全替换优先级较低的元素。也就是说，如果优先级较低的清单中有匹配的元素，会将其忽略并完全按照此元素在此清单中显示的样子使用它</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;cow&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/moo&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;duck&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/quack&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:node</span>=<span class="string">&quot;replace&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;fox&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/dingeringeding&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>合并后的清单结果：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity-alias</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.alias&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">&quot;fox&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:value</span>=<span class="string">&quot;@string/dingeringeding&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity-alias</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>tools:node=”strict”</strong></p>
+<p>每当此元素在优先级较低的清单中与在优先级较高的清单中不完全匹配时，都会导致构建失败（除非已通过其他合并规则标记解决）。这会替换<a target="_blank" rel="noopener" href="https://developer.android.com/studio/build/manage-manifests#merge_conflict_heuristics">合并冲突启发式算法</a>。例如，如果优先级较低的清单只是包含一个额外的属性，构建就会失败（尽管默认行为是将该额外属性添加到合并后的清单中）</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.SEND&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.DEFAULT&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:node</span>=<span class="string">&quot;strict&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>这会导致清单合并错误</strong>。在严格模式下，这两个清单元素不能有任何不同。因此，您必须应用其他合并规则标记解决这些差异。（通常，这两个元素会正常合并在一起，如上面的 <code>tools:node=&quot;merge&quot;</code> 示例中所示。）</p>
+</li>
+</ul>
+<h4 id="属性标记分为："><a href="#属性标记分为：" class="headerlink" title="属性标记分为："></a><strong>属性标记分为：</strong></h4><ul>
+<li><p><strong>tools:remove=”attr, …”</strong></p>
+<p>从合并后的清单中移除指定属性。虽然您似乎只需要删除这些属性即可，但如果优先级较低的清单文件包含这些属性，而您想确保它们不会被纳入合并后的清单，则必须使用此属性。</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:remove</span>=<span class="string">&quot;android:windowSoftInputMode&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>合并后的清单结果：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>tools:replace=”attr, …”</strong></p>
+<p>将优先级较低的清单中的指定属性替换为此清单中的属性</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:theme</span>=<span class="string">&quot;@oldtheme&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:theme</span>=<span class="string">&quot;@newtheme&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:replace</span>=<span class="string">&quot;android:theme,android:exported&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>合并后的清单结果：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:theme</span>=<span class="string">&quot;@newtheme&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>tools:strict=”attr, …”</strong></p>
+<p>每当这些属性在优先级较低的清单中与在优先级较高的清单中不完全匹配时，都会导致构建失败。<strong>这是所有属性的默认行为</strong>，但具有特殊行为的属性除外，如<a target="_blank" rel="noopener" href="https://developer.android.com/studio/build/manage-manifests#merge_conflict_heuristics">合并冲突启发法</a>中所述。</p>
+<p><strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;landscape&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:strict</span>=<span class="string">&quot;android:screenOrientation&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>这会导致清单合并错误<strong>。您必须应用其他合并规则标记解决冲突。（切记：这是默认行为，因此如果您移除 <code>tools:strict=&quot;screenOrientation&quot;</code>，上面的示例将具有相同的结果。）</strong></p>
+</li>
+</ul>
+<p>    您也可以对一个元素应用多个标记，如下所示：</p>
+<p>    <strong>低优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:theme</span>=<span class="string">&quot;@oldtheme&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:allowTaskReparenting</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:windowSoftInputMode</span>=<span class="string">&quot;stateUnchanged&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>    <strong>高优先级清单：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:theme</span>=<span class="string">&quot;@newtheme&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:replace</span>=<span class="string">&quot;android:theme,android:exported&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:remove</span>=<span class="string">&quot;android:windowSoftInputMode&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>    <strong>合并后的清单结果：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;com.example.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:theme</span>=<span class="string">&quot;@newtheme&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:allowTaskReparenting</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:screenOrientation</span>=<span class="string">&quot;portrait&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="检查合并后的清单文件并查找冲突"><a href="#检查合并后的清单文件并查找冲突" class="headerlink" title="检查合并后的清单文件并查找冲突"></a>检查合并后的清单文件并查找冲突</h2><p>甚至在您构建应用之前，就可以预览合并后的清单是什么样子，方法是在 Android Studio 中打开您的 <code>AndroidManifest.xml</code> 文件，然后点击编辑器底部的 <strong>Merged Manifest</strong> 标签页。</p>
+<p>在“Merged Manifest”视图中，左侧会显示合并后的清单结果，右侧会显示所合并的每个清单文件的相关信息，如图 2 所示。从优先级较低的清单文件中合并的元素在左侧以不同的颜色突出显示。每种颜色的键在右侧的 <strong>Manifest Sources</strong> 下方指定。</p>
+<p><img src="https://developer.android.com/studio/images/build/manifest-merged-view_2x.png"></p>
+<p>属于 build 的一部分但未贡献元素或属性的清单文件列在右侧的 <strong>Other Manifest Files</strong> 下方。</p>
+<p>如需查看有关元素来源的信息，只需在左侧点击相应元素，详细信息即会显示在右侧的 <strong>Merging Log</strong> 下方。</p>
+<p>如果发生任何冲突，它们将显示在右侧的 <strong>Merging Errors</strong> 下方，并且包含有关如何使用<a target="_blank" rel="noopener" href="https://developer.android.com/studio/build/manage-manifests#merge_rule_markers">合并规则标记</a>解决冲突的建议。错误也会显示在 <strong>Event Log</strong> 窗口（依次选择 <strong>View &gt; Tool Windows &gt; Event Log</strong>）中。</p>
+<p>如果您想要查看合并决策树的完整日志，可以在模块的 <code>build/outputs/logs/</code> 目录中查找名为 <code>manifest-merger-buildVariant-report.txt</code> 的日志文件</p>
+<h2 id="合并策略"><a href="#合并策略" class="headerlink" title="合并策略"></a>合并策略</h2><p>清单合并工具可以在逻辑上将一个清单文件中的每个 XML 元素与另一个文件中的对应元素相匹配。合并工具会使用“匹配键”匹配每个元素，匹配键可以是唯一的属性值（如 <code>android:name</code>），也可以是标记本身的自然唯一性（例如，只能有一个 <code>&lt;supports-screen&gt;</code> 元素）。如果两个清单具有相同的 XML 元素，则该工具会采用三种合并政策中的一种，将这两个元素合并在一起：</p>
+<p><strong>合并</strong></p>
+<p>        将所有没有冲突的属性组合到同一标记中，并按各自的合并政策合并子元素。如果任何属性相互冲突，则使用<a target="_blank" rel="noopener" href="https://developer.android.com/studio/build/manage-manifests#merge_rule_markers">合并规则标记</a>将它们合并在一起。</p>
+<p><strong>仅合并子元素</strong></p>
+<p>        不组合或合并属性（仅保留优先级最高的清单文件提供的属性），并按各自的合并政策合并子元素。</p>
+<p><strong>保留</strong></p>
+<p>        将元素“按原样”保留，并将其添加到合并后的文件中的共同父元素中。只有在可以接受同一元素有多个声明时，才会采用此政策。</p>
+<table>
+<thead>
+<tr>
+<th>元素</th>
+<th>合并政策</th>
+<th>匹配键</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;action&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;activity&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;application&gt;</code></td>
+<td>合并</td>
+<td>每个 <code>&lt;manifest&gt;</code> 只有一个</td>
+</tr>
+<tr>
+<td><code>&lt;category&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;data&gt;</code></td>
+<td>合并</td>
+<td>每个 <code>&lt;intent-filter&gt;</code> 只有一个</td>
+</tr>
+<tr>
+<td><code>&lt;grant-uri-permission&gt;</code></td>
+<td>合并</td>
+<td>每个 <code>&lt;provider&gt;</code> 只有一个</td>
+</tr>
+<tr>
+<td><code>&lt;instrumentation&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;intent-filter&gt;</code></td>
+<td>保留</td>
+<td>不匹配；允许父元素内的多个声明</td>
+</tr>
+<tr>
+<td><code>&lt;manifest&gt;</code></td>
+<td>仅合并子元素</td>
+<td>每个文件只有一个</td>
+</tr>
+<tr>
+<td><code>&lt;meta-data&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;path-permission&gt;</code></td>
+<td>合并</td>
+<td>每个 <code>&lt;provider&gt;</code> 只有一个</td>
+</tr>
+<tr>
+<td><code>&lt;permission-group&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;permission&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;permission-tree&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;provider&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;receiver&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;screen&gt;</code></td>
+<td>合并</td>
+<td><code>android:screenSize</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;service&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;supports-gl-texture&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;supports-screen&gt;</code></td>
+<td>合并</td>
+<td>每个 <code>&lt;manifest&gt;</code> 只有一个</td>
+</tr>
+<tr>
+<td><code>&lt;uses-configuration&gt;</code></td>
+<td>合并</td>
+<td>每个 <code>&lt;manifest&gt;</code> 只有一个</td>
+</tr>
+<tr>
+<td><code>&lt;uses-feature&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性（如果不存在，则使用 <code>android:glEsVersion</code> 属性）</td>
+</tr>
+<tr>
+<td><code>&lt;uses-library&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;uses-permission&gt;</code></td>
+<td>合并</td>
+<td><code>android:name</code> 属性</td>
+</tr>
+<tr>
+<td><code>&lt;uses-sdk&gt;</code></td>
+<td>合并</td>
+<td>每个 <code>&lt;manifest&gt;</code> 只有一个</td>
+</tr>
+<tr>
+<td>自定义元素</td>
+<td>合并</td>
+<td>不匹配；合并工具并不知晓这些元素，因此它们始终包含在合并后的清单中</td>
+</tr>
+</tbody></table>
+
+    
+
+    
+    <div class="page-reward">
+      <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+        <div class="tooltip tooltip-east">
+          <span class="tooltip-item">
+            赏
+          </span>
+          <span class="tooltip-content">
+            <span class="tooltip-text">
+              <span class="tooltip-inner">
+                <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i
+                    class="icon icon-quo-right"></i></p>
+                <div class="reward-box">
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/zhifubao.jpg">
+                    <span class="reward-type">支付宝</span>
+                  </div>
+                  
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/donate.jpg">
+                    <span class="reward-type">微信</span>
+                  </div>
+                  
+                </div>
+              </span>
+            </span>
+          </span>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/03/07/%E7%AE%A1%E7%90%86manifest%E6%96%87%E4%BB%B6/" target="_blank">管理Manifest文件</a>
-  
-    </h1>
-  
+      </a>
+    </div>
+    
 
-
-        <div class="article-info info-on-right">
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          周俊鹏
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="https://roc-zjp.github.io/2022/03/07/管理manifest文件/" title="管理Manifest文件" target="_blank">https://roc-zjp.github.io/2022/03/07/管理manifest文件/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
           
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -219,62 +612,55 @@
 		</ul>
 	</div>
 
-          
+    
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/03/02/Android%E5%B8%B8%E7%94%A8ADB%E5%91%BD%E4%BB%A4/" class="archive-article-date">
-        <time datetime="2022-03-02T09:35:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-03-02</time>
-</a>
 
+
+<nav id="article-nav">
+  
+  
+    <a href="/2022/03/02/Android%E5%B8%B8%E7%94%A8ADB%E5%91%BD%E4%BB%A4/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android常用ADB命令（持续更新）</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/03/02/Android%E5%B8%B8%E7%94%A8ADB%E5%91%BD%E4%BB%A4/" target="_blank">Android常用ADB命令（持续更新）</a>
-  
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
-    
+
+
+
+
+
+
+
 
 
           </div>
@@ -303,8 +689,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
